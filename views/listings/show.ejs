@@ -49,9 +49,9 @@
                 <label for="first-rate1" title="Terrible">1 star</label>
                 <input type="radio" id="first-rate2" name="review[rating]" value="2" />
                 <label for="first-rate2" title="Not good">2 stars</label>
-                <input type="radio" id="first-rate3" name="review" value="3" />
+                <input type="radio" id="first-rate3" name="review[rating]" value="3" />
                 <label for="first-rate3" title="Average">3 stars</label>
-                <input type="radio" id="first-rate4" name="review" value="4" />
+                <input type="radio" id="first-rate4" name="review[rating]" value="4" />
                 <label for="first-rate4" title="Very good">4 stars</label>
                 <input type="radio" id="first-rate5" name="review[rating]" value="5" />
                 <label for="first-rate5" title="Amazing">5 stars</label>
@@ -74,12 +74,13 @@
         </form>
            
 
-
-        <% if(listing.reviews && listing.length) { %>
+<%= console.log(listing.reviews) %>
+        <% if(listing.reviews && listing.reviews.length) { %>
         <hr/>
         <p><b>All Reviews</b></p>
         <div class="row mb-3">
-            <% for(review of listing.reviews) { %>
+            
+            <% for(let review of listing.reviews) { %>
                 <div class="card col-5 ms-3 mb-3">
                     <div class="card-body">
                             <h5 class="card-title">Owned by @<%= review.author.username %></h5>

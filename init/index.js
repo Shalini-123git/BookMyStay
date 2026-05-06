@@ -1,8 +1,10 @@
 const mongoose = require("mongoose");
 const initData = require("./data.js");
 const Listing = require("../models/listing.js");
+const dotenv = require("dotenv");
+dotenv.config({ path: "../.env" });
 
-const MONGO_URL = "mongodb://127.0.0.1:27017/wanderlust";
+const MONGO_URL = process.env.MONGO_URL;
 
 main()
   .then(() => {
@@ -18,11 +20,9 @@ async function main() {
 
 const initDB = async () => {
   await Listing.deleteMany({});
-  initData.data = initData.data.map((obj) => ({...obj, owner: '6815c4439111fa168fab33f2'}))
+  initData.data = initData.data.map((obj) => ({...obj, owner: "69fb1dde66b9f12deddb65c7"}))
   await Listing.insertMany(initData.data);
-  console.log("data was initialized");
+  console.log("data is initialized");
 };
 
 initDB();
-
-

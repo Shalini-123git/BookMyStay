@@ -1,10 +1,9 @@
-if(process.env.NODE_ENV != "production"){
-    require("dotenv").config();
-}
-
 const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
+const dotenv = require("dotenv");
+dotenv.config();
+const port = process.env.PORT || 8080;
 const path = require("path");
 const methodOverride = require("method-override");
 const ejsMate = require("ejs-mate");
@@ -18,18 +17,16 @@ const listingRouter = require("./routes/listing.js");
 const reviewRouter = require("./routes/reviews.js");
 const userRouter = require("./routes/users.js");
 
-const MONGO_URL = "mongodb://127.0.0.1:27017/wanderlust";
-
 main()
    .then(() => {
       console.log("connected to db");
    })
    .catch( (err) => {
-      console.log(err);
+      console.log(err.message);
    });
 
 async function main(){
-    await mongoose.connect(MONGO_URL);
+    await mongoose.connect(process.env.MONGO_URL);
 }
 
 app.set("view engine", "ejs");
@@ -97,6 +94,6 @@ app.use((err, req, res, next) => {
     
 });
 
-app.listen(8080, () => {
+app.listen(port, () => {
     console.log("server is listening to port 8080");
 });
