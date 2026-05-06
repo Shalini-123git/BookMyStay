@@ -114,7 +114,3 @@ This project is deployed on **Render/Railway**.
 - Server: Node.js + Express
 - Database: MongoDB Atlas
 
-
----
-
-<p align="center">Made with ❤️ by [Your Name]</p>
