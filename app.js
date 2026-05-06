@@ -19,7 +19,10 @@ const userRouter = require("./routes/users.js");
 
 main()
    .then(() => {
-      console.log("connected to db");
+        console.log("connected to db");
+        app.listen(port, () => {
+            console.log("server is listening to port 8080");
+        });
    })
    .catch( (err) => {
       console.log(err.message);
@@ -92,8 +95,4 @@ app.use((err, req, res, next) => {
     let {statusCode= 500, message = "Something went wrong!" } = err;
     res.status(statusCode).render("error.ejs", { message });
     
-});
-
-app.listen(port, () => {
-    console.log("server is listening to port 8080");
 });
