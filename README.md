@@ -1,4 +1,4 @@
-# 🏡 BookMyStay - Airbnb inspired listing platform
+# 🏡 BookMyStay 
 
 A full-stack Airbnb-inspired property listing platform with interactive maps, reviews & ratings.
 
