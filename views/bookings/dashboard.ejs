@@ -1,0 +1,96 @@
+<% layout("/layouts/boilerplate") -%>
+
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="mb-0">My Bookings</h2>
+            <a href="/listings" class="btn btn-outline-dark">Explore More Stays</a>
+        </div>
+
+        <% if (!bookings.length) { %>
+            <div class="alert alert-info">
+                You have not booked any stays yet.
+            </div>
+        <% } else { %>
+            <div class="table-responsive">
+                <table class="table align-middle">
+                    <thead>
+                        <tr>
+                            <th>Stay</th>
+                            <th>Dates</th>
+                            <th>Guests</th>
+                            <th>Amount</th>
+                            <th>Booking Status</th>
+                            <th>Payment Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% for (let booking of bookings) { %>
+                            <tr>
+                                <td>
+                                    <% if (booking.listingId) { %>
+                                        <div class="d-flex align-items-center gap-3">
+                                            <% if (booking.listingId.image && booking.listingId.image.url) { %>
+                                                <img
+                                                    src="<%= booking.listingId.image.url %>"
+                                                    alt="<%= booking.listingId.title %>"
+                                                    class="booking-thumb"
+                                                >
+                                            <% } %>
+                                            <div>
+                                                <div class="fw-semibold"><%= booking.listingId.title %></div>
+                                                <small class="text-muted">
+                                                    <%= booking.listingId.location %>, <%= booking.listingId.country %>
+                                                </small>
+                                            </div>
+                                        </div>
+                                    <% } else { %>
+                                        <span class="text-muted">Listing removed</span>
+                                    <% } %>
+                                </td>
+                                <td>
+                                    <%= booking.checkIn.toLocaleDateString("en-IN") %>
+                                    -
+                                    <%= booking.checkOut.toLocaleDateString("en-IN") %>
+                                </td>
+                                <td><%= booking.guests %></td>
+                                <td>
+                                    <% if (typeof booking.amount === "number") { %>
+                                        &#8377; <%= booking.amount.toLocaleString("en-IN") %>
+                                    <% } else { %>
+                                        <span class="text-muted">Not available</span>
+                                    <% } %>
+                                </td>
+                                <td>
+                                    <span class="badge text-bg-<%= booking.bookingStatus === "Confirmed" ? "success" : booking.bookingStatus === "Cancelled" ? "danger" : "warning" %>">
+                                        <%= booking.bookingStatus || "pending" %>
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="badge text-bg-<%= booking.paymentStatus === "Confirmed" ? "success" : booking.paymentStatus === "Cancelled" ? "danger" : "secondary" %>">
+                                        <%= booking.paymentStatus || "Pending" %>
+                                    </span>
+                                </td>
+                                <td>
+                                    <% if (booking.bookingStatus !== "Cancelled") { %>
+                                        <div class="d-flex gap-2">
+                                            <% if (booking.paymentStatus !== "Confirmed") { %>
+                                                <a href="/payments/<%= booking._id %>/checkout" class="btn btn-sm btn-outline-dark">Pay</a>
+                                            <% } %>
+                                            <form method="POST" action="/bookListing/<%= booking._id %>/cancel?_method=PATCH">
+                                                <button class="btn btn-sm btn-outline-danger">Cancel</button>
+                                            </form>
+                                        </div>
+                                    <% } else { %>
+                                        <span class="text-muted">No action</span>
+                                    <% } %>
+                                </td>
+                            </tr>
+                        <% } %>
+                    </tbody>
+                </table>
+            </div>
+        <% } %>
+    </div>
+</div>
