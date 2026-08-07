@@ -1,0 +1,88 @@
+<% layout("/layouts/boilerplate") -%>
+
+<div class="row mt-4">
+    <div class="col-md-8 offset-md-2">
+        <h2 class="mb-4">Book Your Stay</h2>
+
+        <div class="card mb-4">
+            <div class="row g-0">
+                <div class="col-md-5">
+                    <img
+                        src="<%= listing.image.url %>"
+                        class="img-fluid rounded-start h-100"
+                        style="object-fit: cover;"
+                        alt="<%= listing.title %>"
+                    >
+                </div>
+                <div class="col-md-7">
+                    <div class="card-body">
+                        <h4 class="card-title"><%= listing.title %></h4>
+                        <p class="card-text mb-1"><%= listing.location %>, <%= listing.country %></p>
+                        <p class="card-text mb-1">
+                            <strong>&#8377; <%= listing.price.toLocaleString("en-IN") %></strong> / night
+                        </p>
+                        <p class="card-text text-muted"><%= listing.description %></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <form method="POST" action="/bookListing/<%= listing._id %>" class="needs-validation" novalidate>
+            <div class="mb-3">
+                <label for="checkIn" class="form-label">Check-in Date</label>
+                <input
+                    type="date"
+                    id="checkIn"
+                    name="booking[checkIn]"
+                    class="form-control"
+                    required
+                >
+                <div class="invalid-feedback">Please select your check-in date.</div>
+            </div>
+
+            <div class="mb-3">
+                <label for="checkOut" class="form-label">Check-out Date</label>
+                <input
+                    type="date"
+                    id="checkOut"
+                    name="booking[checkOut]"
+                    class="form-control"
+                    required
+                >
+                <div class="invalid-feedback">Please select your check-out date.</div>
+            </div>
+
+            <div class="mb-3">
+                <label for="guests" class="form-label">Guests</label>
+                <input
+                    type="number"
+                    id="guests"
+                    name="booking[guests]"
+                    class="form-control"
+                    min="1"
+                    value="1"
+                    required
+                >
+                <div class="invalid-feedback">Please enter at least one guest.</div>
+            </div>
+
+            <div class="mb-3">
+                <label for="note" class="form-label">Special Request</label>
+                <textarea
+                    id="note"
+                    name="booking[note]"
+                    class="form-control"
+                    rows="3"
+                    placeholder="Arrival time, extra needs, or anything the host should know"
+                ></textarea>
+            </div>
+
+            <input type="hidden" name="booking[pricePerNight]" value="<%= listing.price %>">
+
+            <div class="d-flex gap-2 mb-4">
+                <button type="submit" class="btn btn-dark">Confirm Booking</button>
+                <a href="/listings/<%= listing._id %>" class="btn btn-outline-secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
