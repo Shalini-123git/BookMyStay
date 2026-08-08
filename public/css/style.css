@@ -136,6 +136,23 @@ body{
     padding: 1rem;
 }
 
+.booking-summary-card .card-body{
+    padding: 1rem !important;
+}
+
+.booking-table{
+    --bs-table-bg: var(--bs-body-bg);
+    --bs-table-color: var(--bs-body-color);
+    --bs-table-border-color: var(--bs-border-color);
+}
+
+.booking-table small,
+.checkout-card .text-muted,
+.booking-summary-card .text-muted,
+.booking-table .text-muted{
+    color: var(--bs-secondary-color) !important;
+}
+
 /* Map */
 #map{
     height: 400px;
@@ -143,10 +160,10 @@ body{
     margin-bottom: 2rem;
 }
 
-<<<<<<< HEAD
 [data-bs-theme="dark"] .card{
     background-color: var(--bs-tertiary-bg);
     color: var(--bs-body-color);
+    border-color: var(--bs-border-color);
 }
 
 [data-bs-theme="dark"] .btn-outline-dark{
@@ -155,72 +172,33 @@ body{
     --bs-btn-hover-color: #000;
     --bs-btn-hover-bg: var(--bs-body-color);
     --bs-btn-hover-border-color: var(--bs-body-color);
-=======
-/* Dark mode base */
-body.dark-mode {
-  background-color: #121212;
-  color: #f0f0f0;
 }
 
-/* Navbar */
-body.dark-mode .navbar {
-  background-color: #1e1e1e !important;
-
+[data-bs-theme="dark"] .booking-summary-card,
+[data-bs-theme="dark"] .checkout-card{
+    background-color: #1f2329;
+    border-color: #343a40;
+    box-shadow: 0 0.75rem 2rem rgba(0, 0, 0, 0.28);
 }
 
-/* Cards */
-body.dark-mode .card {
-  background-color: #1e1e1e;
-  border-color: #333;
-  color: #f0f0f0;
+[data-bs-theme="dark"] .booking-thumb{
+    border: 1px solid var(--bs-border-color);
 }
 
-/* Inputs & forms */
-body.dark-mode input,
-body.dark-mode textarea,
-body.dark-mode select {
-  background-color: #2c2c2c;
-  color: #f0f0f0;
-  border-color: #555;
+[data-bs-theme="dark"] .booking-table{
+    --bs-table-bg: #15191e;
+    --bs-table-striped-bg: #1c2127;
+    --bs-table-hover-bg: #232932;
+    --bs-table-color: var(--bs-body-color);
+    --bs-table-border-color: #343a40;
 }
 
-/* Footer */
-body.dark-mode footer {
-  background-color: #1e1e1e !important;
-  color: #aaa;
+[data-bs-theme="dark"] .form-control{
+    background-color: #15191e;
+    border-color: #343a40;
+    color: var(--bs-body-color);
 }
 
-/* Links */
-body.dark-mode a {
-  color: #90caf9;
-}
-
-/* Buttons */
-body.dark-mode .btn-outline-secondary {
-  color: #f0f0f0;
-  border-color: #f0f0f0;
-}
-
-/* Navbar text & links */
-body.dark-mode .navbar .nav-link {
-  color: #f0f0f0 !important;
-}
-
-body.dark-mode .navbar .navbar-brand {
-  color: #f0f0f0 !important;
-}
-
-body.dark-mode .navbar .nav-link:hover {
-  color: #90caf9 !important;
-}
-
-/* If you have navbar toggler icon */
-body.dark-mode .navbar-toggler-icon {
-  filter: invert(1);
-}
-
-body.dark-mode .f-info {
-  background-color: #1e1e1e !important;
-  color: #f0f0f0 !important;
->>>>>>> d83eee1c0051189c0ce4269faf8188d6b9e33211
+[data-bs-theme="dark"] .form-control::placeholder{
+    color: var(--bs-secondary-color);
 }
