@@ -3,6 +3,21 @@ const mbxGeocoding = require("@mapbox/mapbox-sdk/services/geocoding");
 const mapToken = process.env.MAP_TOKEN;
 const geocodingClient = mbxGeocoding({ accessToken: mapToken });
 
+const getListingGeometry = async (listing) => {
+    const query = [listing.location, listing.country].filter(Boolean).join(", ");
+    const response = await geocodingClient.forwardGeocode({
+        query,
+        limit: 1
+    }).send();
+
+    const feature = response.body.features[0];
+    if (!feature) {
+        return null;
+    }
+
+    return feature.geometry;
+};
+
 module.exports.index = async (req, res) => {
     const allListings = await Listing.find({});
     res.render("listings/index.ejs", {allListings});
@@ -24,23 +39,24 @@ module.exports.show = async (req, res) => {
         .populate("owner");
     if(!listing){
         req.flash("error", "Requested listing does not exist");
-        res.redirect("/listings");
+        return res.redirect("/listings");
+    }
+    if (!listing.geometry || !listing.geometry.coordinates || listing.geometry.coordinates.length !== 2) {
+        const geometry = await getListingGeometry(listing);
+        if (geometry) {
+            listing.geometry = geometry;
+            await listing.save();
+        }
     }
     res.render("listings/show.ejs", {listing} );
 };
 
 module.exports.create = async (req, res) => {
-    let response = await geocodingClient.forwardGeocode({
-    query: req.body.listing.location,
-    limit: 1
-    })
-    .send();
-    let coordinates = response.body.features[0].geometry.coordinates;
-   
     let url = req.file.path;
     let filename = req.file.filename;
     let listing = req.body.listing;
     const newListing = new Listing(listing);
+    newListing.geometry = await getListingGeometry(newListing);
     req.flash("success", "New Listing created");
     newListing.owner = req.user._id;
     newListing.image = { url, filename };
@@ -63,14 +79,22 @@ module.exports.edit = async (req, res) => {
 
 module.exports.update = async (req, res) => {
     let { id } = req.params;
-    let listing = await Listing.findByIdAndUpdate( id, {...req.body.listing});
+    let listing = await Listing.findById(id);
+    const oldLocation = listing.location;
+    const oldCountry = listing.country;
+
+    Object.assign(listing, req.body.listing);
+
+    if (listing.location !== oldLocation || listing.country !== oldCountry) {
+        listing.geometry = await getListingGeometry(listing);
+    }
 
     if(typeof req.file !== "undefined"){
         let url = req.file.path;
         let filename = req.file.filename;
         listing.image = { url, filename };
-        await listing.save();
     }
+    await listing.save();
     req.flash("success", "Listing updated");
     res.redirect(`/listings/${id}`);
 };
