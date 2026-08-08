@@ -1,0 +1,126 @@
+<% layout("/layouts/boilerplate") -%>
+
+<div class="row mt-4">
+    <div class="col-md-8 offset-md-2">
+        <h2 class="mb-4">Secure Checkout</h2>
+
+        <div class="card checkout-card">
+            <div class="card-body">
+                <% if (booking.listingId) { %>
+                    <div class="d-flex gap-3 align-items-center mb-4">
+                        <% if (booking.listingId.image && booking.listingId.image.url) { %>
+                            <img
+                                src="<%= booking.listingId.image.url %>"
+                                alt="<%= booking.listingId.title %>"
+                                class="booking-thumb"
+                            >
+                        <% } %>
+                        <div>
+                            <h5 class="mb-1"><%= booking.listingId.title %></h5>
+                            <p class="text-muted mb-0">
+                                <%= booking.listingId.location %>, <%= booking.listingId.country %>
+                            </p>
+                        </div>
+                    </div>
+                <% } %>
+
+                <div class="row g-3 mb-4">
+                    <div class="col-sm-6">
+                        <div class="text-muted">Check-in</div>
+                        <div class="fw-semibold"><%= booking.checkIn.toLocaleDateString("en-IN") %></div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="text-muted">Check-out</div>
+                        <div class="fw-semibold"><%= booking.checkOut.toLocaleDateString("en-IN") %></div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="text-muted">Guests</div>
+                        <div class="fw-semibold"><%= booking.guests %></div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="text-muted">Amount</div>
+                        <div class="fw-semibold">&#8377; <%= booking.amount.toLocaleString("en-IN") %></div>
+                    </div>
+                </div>
+
+                <% if (!keyId) { %>
+                    <div class="alert alert-warning">
+                        Razorpay key is missing. Add RAZORPAY_KEY_ID and RAZORPAY_KEY_SECRET in your .env file.
+                    </div>
+                <% } %>
+
+                <div class="d-flex gap-2">
+                    <button id="payBtn" class="btn btn-dark" <%= !keyId ? "disabled" : "" %>>Pay Now</button>
+                    <a href="/bookListing/dashboard" class="btn btn-outline-secondary">Pay Later</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
+    const payBtn = document.getElementById("payBtn");
+
+    if (payBtn) {
+        payBtn.addEventListener("click", async () => {
+            payBtn.disabled = true;
+            payBtn.innerText = "Processing...";
+
+            try {
+                const orderResponse = await fetch("/payments/<%= booking._id %>/create-order", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" }
+                });
+                const orderData = await orderResponse.json();
+
+                if (!orderData.success) {
+                    throw new Error(orderData.message || "Unable to create payment order");
+                }
+
+                const options = {
+                    key: "<%= keyId %>",
+                    amount: orderData.order.amount,
+                    currency: orderData.order.currency,
+                    name: "Wanderlust",
+                    description: "Stay booking payment",
+                    order_id: orderData.order.id,
+                    handler: async function (response) {
+                        const verifyResponse = await fetch("/payments/verify", {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({
+                                bookingId: "<%= booking._id %>",
+                                razorpay_order_id: response.razorpay_order_id,
+                                razorpay_payment_id: response.razorpay_payment_id,
+                                razorpay_signature: response.razorpay_signature
+                            })
+                        });
+                        const verifyData = await verifyResponse.json();
+
+                        if (verifyData.success) {
+                            window.location.href = "/bookListing/dashboard";
+                        } else {
+                            throw new Error(verifyData.message || "Payment verification failed");
+                        }
+                    },
+                    theme: {
+                        color: "#fe424d"
+                    }
+                };
+
+                const razorpay = new Razorpay(options);
+                razorpay.on("payment.failed", function () {
+                    window.location.href = "/bookListing/dashboard";
+                });
+                razorpay.open();
+                payBtn.disabled = false;
+                payBtn.innerText = "Pay Now";
+            } catch (err) {
+                alert(err.message);
+                payBtn.disabled = false;
+                payBtn.innerText = "Pay Now";
+            }
+        });
+    }
+</script>
