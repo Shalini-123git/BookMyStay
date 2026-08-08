@@ -117,6 +117,19 @@ body{
     margin-left: 2rem;
 }
 
+.booking-action{
+    margin-left: 0;
+    margin-top: 0.75rem;
+    margin-bottom: 1rem;
+}
+
+.booking-action .btn{
+    min-width: 10rem;
+    font-weight: 600;
+    padding: 0.65rem 1.25rem;
+    border-radius: 0.5rem;
+}
+
 .show-card{
     padding: 2%;
 }

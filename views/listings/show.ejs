@@ -35,17 +35,11 @@
         </form> 
     </div>
         <% } else { %>
-    <div class="btns">
-        <button class="btn btn-dark add-btn" type="button">Book now</button>
+    <div class="btns booking-action">
+        <a href="/bookListing/<%= listing._id %>" class="btn btn-dark add-btn">Book Your Stay</a>
     </div>
         <% } %>
      <div >
-    
-    <div>
-        <form method="get" action="/bookListing/<%= listing._id %>">
-            <button>Book Your Stay</button>
-        </form>
-    </div>   
         
             <br/>
         <h4>Leave a review</h4>
