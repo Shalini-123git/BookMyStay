@@ -1,8 +1,12 @@
 const Listing = require("../models/listing");
 const Review = require("../models/review");
+const ExpressError = require("../utils/ExpressError");
 
 module.exports.postReviewRouter = async (req, res) => {
     let listing = await Listing.findById(req.params.id);
+    if (!listing) {
+        throw new ExpressError(404, "Listing does not exist");
+    }
     let newReview = new Review(req.body.review);
     newReview.author = req.user._id;
     listing.reviews.push(newReview);

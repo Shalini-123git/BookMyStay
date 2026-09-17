@@ -4,7 +4,7 @@ module.exports.signupRouter = (req, res) => {
     res.render("users/signup.ejs");
 };
 
-module.exports.signupPostRouter = async(req, res) => {
+module.exports.signupPostRouter = async(req, res, next) => {
     try{
         let { username, email, password } = req.body;
         let newUser = new User({ email, username });

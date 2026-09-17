@@ -59,6 +59,13 @@ router.post("/:bookingId/create-order", isLoggedIn, wrapAsync(async (req, res) =
         });
     }
 
+    if (booking.paymentStatus === "Confirmed") {
+        return res.status(400).json({
+            success: false,
+            message: "This booking is already paid"
+        });
+    }
+
     const amountInPaise = Math.round(booking.amount * 100);
     const auth = Buffer
         .from(`${process.env.RAZORPAY_API_KEY}:${process.env.RAZORPAY_API_SECRET}`)
@@ -117,12 +124,25 @@ router.post("/verify", isLoggedIn, wrapAsync(async (req, res) => {
     } = req.body;
 
     const booking = await getBookingForCurrentUser(bookingId, req.user._id);
+    const payment = await Payment.findOne({ bookingId: booking._id });
+
+    if (!payment || payment.razorpayOrderId !== razorpay_order_id) {
+        return res.status(400).json({
+            success: false,
+            message: "Payment order does not match this booking"
+        });
+    }
+
     const generatedSignature = crypto
         .createHmac("sha256", process.env.RAZORPAY_API_SECRET)
         .update(`${razorpay_order_id}|${razorpay_payment_id}`)
         .digest("hex");
 
-    if (generatedSignature !== razorpay_signature) {
+    const signatureIsValid = typeof razorpay_signature === "string"
+        && generatedSignature.length === razorpay_signature.length
+        && crypto.timingSafeEqual(Buffer.from(generatedSignature), Buffer.from(razorpay_signature));
+
+    if (!signatureIsValid) {
         await Payment.findOneAndUpdate(
             { bookingId: booking._id },
             { paymentStatus: "Failed" },

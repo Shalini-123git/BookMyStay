@@ -1,21 +1,25 @@
 const Listing = require("../models/listing");
+const ExpressError = require("../utils/ExpressError.js");
 const mbxGeocoding = require("@mapbox/mapbox-sdk/services/geocoding");
 const mapToken = process.env.MAP_TOKEN;
-const geocodingClient = mbxGeocoding({ accessToken: mapToken });
+const geocodingClient = mapToken ? mbxGeocoding({ accessToken: mapToken }) : null;
 
 const getListingGeometry = async (listing) => {
-    const query = [listing.location, listing.country].filter(Boolean).join(", ");
-    const response = await geocodingClient.forwardGeocode({
-        query,
-        limit: 1
-    }).send();
-
-    const feature = response.body.features[0];
-    if (!feature) {
+    if (!geocodingClient) {
         return null;
     }
-
-    return feature.geometry;
+    try {
+        const query = [listing.location, listing.country].filter(Boolean).join(", ");
+        const response = await geocodingClient.forwardGeocode({
+            query,
+            limit: 1
+        }).send();
+        const feature = response.body.features[0];
+        return feature ? feature.geometry : null;
+    } catch (error) {
+        console.error("Unable to geocode listing location:", error.message);
+        return null;
+    }
 };
 
 module.exports.index = async (req, res) => {
@@ -52,6 +56,9 @@ module.exports.show = async (req, res) => {
 };
 
 module.exports.create = async (req, res) => {
+    if (!req.file) {
+        throw new ExpressError(400, "An image is required");
+    }
     let url = req.file.path;
     let filename = req.file.filename;
     let listing = req.body.listing;
@@ -69,7 +76,7 @@ module.exports.edit = async (req, res) => {
     let listing = await Listing.findById(id);
     if(!listing){
         req.flash("error", "Listing you requested for does not exist");
-        res.redirect("/lisitngs");
+        return res.redirect("/listings");
     }
 
     let originalImageUrl = listing.image.url;
@@ -80,6 +87,9 @@ module.exports.edit = async (req, res) => {
 module.exports.update = async (req, res) => {
     let { id } = req.params;
     let listing = await Listing.findById(id);
+    if (!listing) {
+        throw new ExpressError(404, "Listing does not exist");
+    }
     const oldLocation = listing.location;
     const oldCountry = listing.country;
 

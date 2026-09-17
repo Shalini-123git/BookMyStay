@@ -3,6 +3,9 @@ const app = express();
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
 dotenv.config();
+if (!process.env.SESSION_SECRET) {
+    throw new Error("SESSION_SECRET must be set in the environment");
+}
 const port = process.env.PORT || 8080;
 const path = require("path");
 const methodOverride = require("method-override");
@@ -43,12 +46,12 @@ app.engine("ejs", ejsMate);
 app.use(express.static(path.join(__dirname, "/public")));
 
 const sessionOptions = {
-    secret: "mysupersecret",
+    secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: true,
     cookie: {
         expires: Date.now() + 3 * 24 * 60 * 60 * 1000,
-        maAge: 3 * 24 * 60 * 60 * 1000,
+        maxAge: 3 * 24 * 60 * 60 * 1000,
         httpOnly: true
     },
 }; 

@@ -1,116 +1,142 @@
-# 🏡 BookMyStay 
+# BookMyStay
 
-A full-stack Airbnb-inspired property listing platform with interactive maps, reviews & ratings.
+BookMyStay is a full-stack property booking web app inspired by Airbnb. Users can browse stays, create listings, upload listing images, view listing locations on Mapbox, leave reviews, book available dates, and complete booking payments through Razorpay.
 
-🔗 **Live Demo:** [Click here to view](https://full-stack-property-booking-platform.onrender.com)
+Live Demo: https://full-stack-property-booking-platform.onrender.com
 
----
+## Features
 
-## ✨ Features
+- Property listings with create, read, update, and delete support
+- Cloudinary image uploads for listing photos
+- User signup, login, logout, and protected routes with Passport.js
+- Owner-only listing edit and delete actions
+- Reviews and star ratings for listings
+- Mapbox location maps using saved listing coordinates
+- Booking flow with check-in, check-out, guests, special requests, and amount calculation
+- Booking conflict checks to prevent overlapping active bookings
+- User booking dashboard with booking/payment status and cancel action
+- Razorpay checkout flow with order creation and payment verification
+- Light/dark theme toggle with saved user preference
+- Flash messages, server-side validation, and centralized error handling
 
-- **Property Listings** — Users can create, edit and delete property listings
-- **Reviews & Ratings** — Authenticated users can leave reviews on listings
-- **Interactive Map** — Each listing shows location using **Mapbox**
-- **Authentication** — Secure login & signup using **Passport.js Local Strategy**
-- **Session Based Auth** — User sessions managed securely on the server
-- **Responsive Design** — Works seamlessly on mobile and desktop
-- **Coming Soon:** Booking & payment system is currently under development!
+## Tech Stack
 
----
+Frontend:
+- EJS and ejs-mate layouts
+- Bootstrap 5
+- CSS
+- JavaScript
+- Font Awesome
+- Mapbox GL JS
 
-## 🛠️ Tech Stack
+Backend:
+- Node.js
+- Express.js
+- MongoDB and Mongoose
+- Passport.js with passport-local-mongoose
+- Joi validation
+- Multer and Cloudinary storage
+- Razorpay Orders API
 
-### Frontend
-![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white)
-![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white)
-![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)
-![EJS](https://img.shields.io/badge/EJS-B4CA65?style=for-the-badge&logo=ejs&logoColor=black)
-![Bootstrap](https://img.shields.io/badge/Bootstrap-563D7C?style=for-the-badge&logo=bootstrap&logoColor=white)
-![TailwindCSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)
-![MUI](https://img.shields.io/badge/Material_UI-007FFF?style=for-the-badge&logo=mui&logoColor=white)
+## Project Structure
 
-### Backend
-![Node.js](https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white)
-![Express.js](https://img.shields.io/badge/Express.js-000000?style=for-the-badge&logo=express&logoColor=white)
-
-### Database
-![MongoDB](https://img.shields.io/badge/MongoDB-4EA94B?style=for-the-badge&logo=mongodb&logoColor=white)
-
-### Auth & Maps
-![Passport.js](https://img.shields.io/badge/Passport.js-34E27A?style=for-the-badge&logo=passport&logoColor=white)
-![Mapbox](https://img.shields.io/badge/Mapbox-000000?style=for-the-badge&logo=mapbox&logoColor=white)
-
----
-
-## 🔐 Authentication Flow
-
-- User registers with **username & password**
-- Password is **hashed and stored** securely in MongoDB
-- Login handled via **Passport Local Strategy**
-- User session is maintained using **express-session**
-- Protected routes redirect unauthenticated users to login page
-
----
-
-## 📁 Project Structure
-
+```text
+MAJORPROJECT/
+|-- app.js
+|-- cloudConfig.js
+|-- middleware.js
+|-- schema.js
+|-- controller/
+|   |-- listings.js
+|   |-- reviews.js
+|   |-- users.js
+|-- models/
+|   |-- booking.js
+|   |-- listing.js
+|   |-- payment.js
+|   |-- review.js
+|   |-- user.js
+|-- routes/
+|   |-- booking.js
+|   |-- listing.js
+|   |-- payment.js
+|   |-- reviews.js
+|   |-- users.js
+|-- views/
+|   |-- bookings/
+|   |-- includes/
+|   |-- layouts/
+|   |-- listings/
+|   |-- payments/
+|   |-- users/
+|-- public/
+|   |-- css/
+|   |-- js/
+|-- init/
+|   |-- data.js
+|   |-- index.js
 ```
-wanderlust/
-├── models/
-│   ├── listing.js       # Listing schema
-│   ├── review.js        # Review schema
-│   └── user.js          # User schema
-├── routes/
-│   ├── listing.js       # Listing routes
-│   ├── review.js        # Review routes
-│   └── user.js          # Auth routes
-├── views/
-│   ├── listings/        # EJS templates for listings
-│   ├── users/           # Login & signup pages
-│   └── partials/        # Navbar, footer
-├── public/              # Static CSS, JS files
-├── app.js               # Main server file
-└── .env                 # Environment variables
+
+## Environment Variables
+
+Create a `.env` file in the project root.
+
+```env
+CLOUD_NAME=your_cloudinary_cloud_name
+CLOUD_API_KEY=your_cloudinary_api_key
+CLOUD_API_SECRET=your_cloudinary_api_secret
+
+MAP_TOKEN=your_mapbox_access_token
+MONGO_URL=your_mongodb_connection_string
+PORT=8080
+
+RAZORPAY_API_KEY=your_razorpay_key_id
+RAZORPAY_API_SECRET=your_razorpay_key_secret
 ```
 
----
-
-## ⚙️ Installation & Setup
+## Installation
 
 ```bash
-# 1. Clone the repository
-git clone https://github.com/YOUR_USERNAME/wanderlust.git
-
-# 2. Navigate to project directory
-cd wanderlust
-
-# 3. Install dependencies
+git clone https://github.com/YOUR_USERNAME/YOUR_REPOSITORY.git
+cd MAJORPROJECT
 npm install
-
-# 4. Create a .env file and add the following
-MONGO_URL=your_mongodb_connection_string
-SECRET=your_session_secret
-MAPBOX_TOKEN=your_mapbox_token
-
-# 5. Start the server
-node app.js
+npm start
 ```
 
----
+Then open:
 
-## 🌍 Environment Variables
+```text
+http://localhost:8080
+```
 
-| Variable | Description |
-|---|---|
-| `MONGO_URL` | MongoDB connection string |
-| `SECRET` | Session secret key |
-| `MAPBOX_TOKEN` | Mapbox API token for maps |
+## Main Routes
 
----
+- `GET /listings` - View all listings
+- `GET /listings/new` - Create listing form
+- `GET /listings/:id` - Listing details with map, reviews, and booking action
+- `GET /bookListing/:id` - Booking form for a listing
+- `GET /bookListing/dashboard` - Current user's booking dashboard
+- `GET /payments/:bookingId/checkout` - Razorpay checkout page
+- `GET /signup` - Signup page
+- `GET /login` - Login page
 
-## 🚀 Deployment
+## Booking And Payment Flow
 
-This project is deployed on **Render/Railway**.
-- Server: Node.js + Express
-- Database: MongoDB Atlas
+1. A logged-in user opens a listing and clicks `Book Your Stay`.
+2. The user selects check-in/check-out dates, guest count, and optional notes.
+3. The server checks for overlapping active bookings.
+4. A booking is saved with pending booking/payment status.
+5. The user is redirected to checkout.
+6. Razorpay creates an order and verifies the payment signature.
+7. On successful payment, booking and payment status are updated to confirmed.
 
+## Map Behavior
+
+New listings are geocoded with Mapbox and store GeoJSON point coordinates in MongoDB. Listing detail pages pass those coordinates to `public/js/map.js`, which centers the map and marker on the listing location. Older listings without saved coordinates are geocoded when the listing page is viewed.
+
+## Notes
+
+- Booking, payment, listing creation, review creation, and dashboard routes require login where appropriate.
+- Cloudinary credentials are required for image uploads.
+- Mapbox token is required for listing maps.
+- Razorpay credentials are required for live checkout order creation and payment verification.

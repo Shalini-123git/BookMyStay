@@ -57,12 +57,18 @@ router.post("/:id", isLoggedIn, wrapAsync(async (req, res) => {
         throw new ExpressError(404, "Listing does not exist");
     }
 
-    const { checkIn, checkOut, guests, note } = req.body.booking;
+    const { checkIn, checkOut, guests, note } = req.body.booking || {};
     const checkInDate = new Date(checkIn);
     const checkOutDate = new Date(checkOut);
+    const guestCount = Number(guests);
 
-    if (checkOutDate <= checkInDate) {
-        req.flash("error", "Check-out date must be after check-in date");
+    if (Number.isNaN(checkInDate.valueOf()) || Number.isNaN(checkOutDate.valueOf()) || checkOutDate <= checkInDate) {
+        req.flash("error", "Enter valid dates with check-out after check-in");
+        return res.redirect(`/bookListing/${id}`);
+    }
+
+    if (!Number.isInteger(guestCount) || guestCount < 1) {
+        req.flash("error", "Enter at least one guest");
         return res.redirect(`/bookListing/${id}`);
     }
 
@@ -87,7 +93,7 @@ router.post("/:id", isLoggedIn, wrapAsync(async (req, res) => {
         listingId: listing._id,
         checkIn: checkInDate,
         checkOut: checkOutDate,
-        guests,
+        guests: guestCount,
         note,
         pricePerNight: listing.price,
         amount,

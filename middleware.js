@@ -5,7 +5,7 @@ const Review = require("./models/review.js");
 
 module.exports.isLoggedIn = (req, res, next) => {
     if(!req.isAuthenticated()){
-        req.session.redirectUrl = `/listings/${req.params.id}`;
+        req.session.redirectUrl = req.originalUrl;
         req.flash("error", "You must be logged in before login");
         return res.redirect("/login");
     }
@@ -22,7 +22,10 @@ module.exports.saveRedirectUrl = (req, res, next) => {
 module.exports.isOwner = async (req, res, next) => {
     let { id } = req.params;
     let listing = await Listing.findById(id);
-    if(!listing.owner.equals(res.locals.currUser._id)){
+    if (!listing) {
+        throw new ExpressError(404, "Listing does not exist");
+    }
+    if (!listing.owner || !listing.owner.equals(res.locals.currUser._id)) {
         req.flash("error", "You are not the owner of the listing");
         return res.redirect(`/listings/${id}`);
     }
@@ -32,7 +35,10 @@ module.exports.isOwner = async (req, res, next) => {
 module.exports.isReviewAuthor = async (req, res, next) => {
     let {id, reviewId } = req.params;
     let review = await Review.findById(reviewId);
-    if(!review.author.equals(res.locals.currUser._id)){
+    if (!review) {
+        throw new ExpressError(404, "Review does not exist");
+    }
+    if (!review.author || !review.author.equals(res.locals.currUser._id)) {
         req.flash("error", "You are not the auther of the review");
         return res.redirect(`/listings/${id}`);
     }
@@ -43,7 +49,7 @@ module.exports.validateListing = (req, res, next) => {
     let { error } = listingSchema.validate(req.body);
     if(error) {
         let errMsg = error.details.map((el) => el.message).join(",");
-        throw new ExpressError(404, errMsg)
+        throw new ExpressError(400, errMsg)
     }else {
         next();
     }
@@ -53,7 +59,7 @@ module.exports.validateReview = (req, res, next) => {
     let { error } = reviewSchema.validate(req.body);
     if(error) {
         let errMsg = error.details.map((el) => el.message).join(",");
-        throw new ExpressError(404, errMsg)
+        throw new ExpressError(400, errMsg)
     }else {
         next();
     }
