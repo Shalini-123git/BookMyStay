@@ -60,6 +60,10 @@ app.get("/", (req, res) => {
     res.redirect("/listings")
 });
 
+app.get("/test", (req, res) => {
+    res.status(200).json({ status: "ok", message: "BookMyStay is running" });
+});
+
 app.use(session(sessionOptions));
 app.use(flash());
 
