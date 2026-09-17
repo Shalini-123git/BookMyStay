@@ -22,17 +22,6 @@ const userRouter = require("./routes/users.js");
 const booking = require("./routes/booking.js");
 const paymentRouter = require("./routes/payment.js");
 
-main()
-   .then(() => {
-        console.log("connected to db");
-        app.listen(port, () => {
-            console.log("server is listening to port 8080");
-        });
-   })
-   .catch( (err) => {
-      console.log(err.message);
-   });
-
 async function main(){
     await mongoose.connect(process.env.MONGO_URL);
 }
@@ -108,3 +97,19 @@ app.use((err, req, res, next) => {
     res.status(statusCode).render("error.ejs", { message });
     
 });
+
+if (require.main === module) {
+    main()
+        .then(() => {
+            console.log("connected to db");
+            app.listen(port, () => {
+                console.log(`server is listening on port ${port}`);
+            });
+        })
+        .catch((err) => {
+            console.error(err.message);
+            process.exitCode = 1;
+        });
+}
+
+module.exports = app;
